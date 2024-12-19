@@ -1,0 +1,2 @@
+export { ConfigEnv } from "./constEnv";
+

@@ -1,0 +1,48 @@
+-- Tabla: tb_historias
+CREATE TABLE tb_historias (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER,
+    estado CHARACTER VARYING(10),
+    favorito BOOLEAN,
+    tipoletra CHARACTER VARYING(20),
+    fondo CHARACTER VARYING(20),
+    texto CHARACTER VARYING(100),
+    colortexto CHARACTER VARYING(20),
+    fecha_publicacion TIMESTAMP WITHOUT TIME ZONE,
+    video TEXT,
+    imagen TEXT
+);
+
+-- Tabla: tb_usuario
+CREATE TABLE tb_usuario (
+    id SERIAL PRIMARY KEY,
+    nombre CHARACTER VARYING(100),
+    email CHARACTER VARYING(100),
+    password CHARACTER VARYING(100),
+    fecha_creacion TIMESTAMP WITHOUT TIME ZONE
+);
+
+-- Tabla: tb_amigos
+CREATE TABLE tb_amigos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER REFERENCES tb_usuario(id) ON DELETE CASCADE,
+    amigo_id INTEGER REFERENCES tb_usuario(id) ON DELETE CASCADE,
+    fecha_creacion TIMESTAMP WITHOUT TIME ZONE
+);
+
+-- Tabla: tb_solicitudes_amigos
+CREATE TABLE tb_solicitudes_amigos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER REFERENCES tb_usuario(id) ON DELETE CASCADE,
+    amigo_id INTEGER REFERENCES tb_usuario(id) ON DELETE CASCADE,
+    estado CHARACTER VARYING(20),
+    fecha_creacion TIMESTAMP WITHOUT TIME ZONE
+);
+
+-- Tabla: tb_historias_favoritas
+CREATE TABLE tb_historias_favoritas (
+    id SERIAL PRIMARY KEY,
+    historia_id INTEGER REFERENCES tb_historias(id) ON DELETE CASCADE,
+    usuario_id INTEGER REFERENCES tb_usuario(id) ON DELETE CASCADE,
+    fecha_favorito TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
