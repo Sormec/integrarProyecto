@@ -35,7 +35,7 @@ CREATE TABLE tb_solicitudes_amigos (
     id SERIAL PRIMARY KEY,
     usuario_id INTEGER REFERENCES tb_usuario(id) ON DELETE CASCADE,
     amigo_id INTEGER REFERENCES tb_usuario(id) ON DELETE CASCADE,
-    estado CHARACTER VARYING(20),
+    estado CHARACTER VARYING(20) DEFAULT 'pendiente',
     fecha_creacion TIMESTAMP WITHOUT TIME ZONE
 );
 

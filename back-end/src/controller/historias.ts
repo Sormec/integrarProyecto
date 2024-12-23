@@ -76,8 +76,10 @@ export const actualizarHistorias = async (): Promise<void> => {
     console.error('Error al actualizar las historias:', error);
   }
 };
-//12hsetInterval(actualizarHistorias, 1000 * 60 * 60 * 12);
-//1msetInterval(actualizarHistorias, 1000 * 60);
+//12h
+//setInterval(actualizarHistorias, 1000 * 60 * 60 * 12);
+//1min
+//setInterval(actualizarHistorias, 1000 * 60);
 //1h
 setInterval(actualizarHistorias, 1000 * 60 * 60);
 // Actualizar el estado favorito de una historia
