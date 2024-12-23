@@ -11,7 +11,7 @@ const obtenerUsuarioLogueado = () => {
 
 const obtenerHistoriasFavoritas = async () => {
   try {
-    const response = await fetch('http://localhost:3636/api/historiasf', { credentials: 'include' });
+    const response = await fetch('http://localhost:3306/api/historiasf', { credentials: 'include' });
     const data = await response.json(); 
 
     const historiasSinDuplicados = data.filter((value, index, self) =>
@@ -26,7 +26,7 @@ const obtenerHistoriasFavoritas = async () => {
 
 const eliminarFavorita = async (id, esFavorito, setHistorias, setHistoriaActual) => {
   try {
-    const response = await fetch(`http://localhost:3636/api/historias/favorito/${id}`, {
+    const response = await fetch(`http://localhost:3306/api/historias/favorito/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

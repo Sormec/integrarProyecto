@@ -4,7 +4,7 @@ const guardarHistoria = async (usuario_id, imagenBase64, videoUrl = null, texto,
   };
 
   try {
-    const response = await fetch('http://localhost:3636/api/historias', {
+    const response = await fetch('http://localhost:3306/api/historias', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

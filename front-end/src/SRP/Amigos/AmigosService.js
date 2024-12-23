@@ -1,6 +1,6 @@
 export const obtenerUsuarios = async (setUsuarios, solicitudes) => {
   try {
-    const response = await fetch('http://localhost:3636/api/no-amigos', { credentials: 'include' });
+    const response = await fetch('http://localhost:3306/api/no-amigos', { credentials: 'include' });
     const data = await response.json();
 
     const usuariosFiltrados = data.filter((usuario) => 
@@ -15,7 +15,7 @@ export const obtenerUsuarios = async (setUsuarios, solicitudes) => {
 
 export const obtenerSolicitudes = async (setSolicitudes) => {
   try {
-    const response = await fetch('http://localhost:3636/api/solicitudes', { credentials: 'include' });
+    const response = await fetch('http://localhost:3306/api/solicitudes', { credentials: 'include' });
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);
     }
@@ -28,7 +28,7 @@ export const obtenerSolicitudes = async (setSolicitudes) => {
 
 export const enviarSolicitud = async (usuarioActual, amigoId, setUsuarios) => {
   try {
-    const response = await fetch('http://localhost:3636/api/enviar-solicitud', {
+    const response = await fetch('http://localhost:3306/api/enviar-solicitud', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ usuario_id: usuarioActual, amigo_id: amigoId }),

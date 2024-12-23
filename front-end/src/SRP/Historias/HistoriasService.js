@@ -1,6 +1,6 @@
 export const obtenerHistorias = async () => {
   try {
-    const response = await fetch('http://localhost:3636/api/historias', { credentials: 'include' });
+    const response = await fetch('http://localhost:3306/api/historias', { credentials: 'include' });
     if (!response.ok) throw new Error('Error al obtener historias');
     const data = await response.json();
     return eliminarDuplicados(data);
@@ -12,7 +12,7 @@ export const obtenerHistorias = async () => {
 
 export const obtenerAmigos = async () => {
   try {
-    const response = await fetch('http://localhost:3636/api/amigos', { credentials: 'include' });
+    const response = await fetch('http://localhost:3306/api/amigos', { credentials: 'include' });
     if (!response.ok) throw new Error('Error al obtener amigos');
     const data = await response.json();
     return eliminarDuplicados(data);
@@ -24,7 +24,7 @@ export const obtenerAmigos = async () => {
 
 export const obtenerFavoritas = async () => {
   try {
-    const response = await fetch('http://localhost:3636/api/historiasf', { credentials: 'include' });
+    const response = await fetch('http://localhost:3306/api/historiasf', { credentials: 'include' });
     if (!response.ok) throw new Error('Error al obtener historias favoritas');
     const data = await response.json();
     return eliminarDuplicados(data);

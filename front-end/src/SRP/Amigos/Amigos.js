@@ -28,7 +28,7 @@ export const Amigos = () => {
 
   const aceptarSolicitud = async (solicitudId) => {
     try {
-      const response = await fetch(`http://localhost:3636/api/aceptar-solicitud`, {
+      const response = await fetch(`http://localhost:3306/api/aceptar-solicitud`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -53,7 +53,7 @@ export const Amigos = () => {
   
   const rechazarSolicitud = async (solicitudId) => {
     try {
-      const response = await fetch('http://localhost:3636/api/rechazar-solicitud', {
+      const response = await fetch('http://localhost:3306/api/rechazar-solicitud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

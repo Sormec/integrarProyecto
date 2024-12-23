@@ -10,7 +10,7 @@ export const obtenerUsuarioLogueado = (setUsuarioLogueado) => {
 
 export const obtenerHistorias = async (id, setHistorias, setHistoriaActual, setIndiceActual, setUsuarioSeleccionado, setHistoriasUsuario) => {
   try {
-    const response = await fetch('http://localhost:3636/api/historias', { credentials: 'include' });
+    const response = await fetch('http://localhost:3306/api/historias', { credentials: 'include' });
     const data = await response.json();
     const historiasSinDuplicados = data.filter((value, index, self) =>
       index === self.findIndex((t) => t.id === value.id)
@@ -36,7 +36,7 @@ export const obtenerHistorias = async (id, setHistorias, setHistoriaActual, setI
 
 export const marcarFavorita = async (id, esFavorito, setHistorias, setHistoriaActual) => {
   try {
-    const response = await fetch(`http://localhost:3636/api/historias/favorito/${id}`, {
+    const response = await fetch(`http://localhost:3306/api/historias/favorito/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ favorito: !esFavorito }),
