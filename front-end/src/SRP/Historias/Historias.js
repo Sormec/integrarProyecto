@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import ReactPlayer from 'react-player';
 import { obtenerHistorias, obtenerAmigos, obtenerFavoritas } from './HistoriasService';
 import logo from '../../assets/Logo.png';
+import './style.css';
 
 export const Historias = () => {
   const [historias, setHistorias] = useState([]);
@@ -83,25 +84,25 @@ export const Historias = () => {
 
   return (
     <div className="relative min-h-screen text-center" style={{ backgroundColor: '#e6e7eb', fontFamily: "'Bitter', serif" }}>
-      <img src={logo} alt="Logo" className="mb-5" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
-      <button style={{ backgroundColor: '#ffffff'}} className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full shadow-lg hover:bg-red-700 transition duration-300"
+      <img src={logo} alt="Logo" className="mb-5 mx-2" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+      <button className="btn-cerrar-sesion absolute top-4 right-4 p-2 rounded-full shadow-lg transition duration-300"
       onClick={cerrarSesion}
       >
-        <FaSignOutAlt className="text-xl" style={{ color: '#464543' }} />
+        <FaSignOutAlt className="text-xl cerrar-sesion-icon"/>
       </button>
-      <div style={{ maxWidth: '100%' }} className="flex items-start justify-center contenedor-principal">
-        <div style={{minWidth: '120px', height: '200px', marginTop: '20px',  backgroundColor: '#ffffff', color: '#464543', fontFamily: 'Bitter, serif' }}
-        onClick={() => navigate('/crear-historia')} className="bg-gray-600 rounded-lg mt-6 flex flex-col justify-center items-center px-2 mx-1 formulario-historia"
-        >
-          <button className="p-3 rounded-full mb-2" style={{background:'#454643', color: '#ffffff' }}>
+      {/* flex: alinea los elementos dinamicamente, con lo otro alineara los elementos de manera vertical y horizontal */}
+      <div className="contenedor-principal flex items-start justify-center"> 
+        <div onClick={() => navigate('/crear-historia')} className="contenedor-historia rounded-lg mt-6 flex flex-col items-center justify-center px-2 mx-2">
+          <button className="btn-crear-historia p-3 rounded-full mb-2">
             <FaPlus size={20}/>
           </button>
-          <span style={{color:'#464543'}} className="text-white">Crear historia</span>
+          <span className='texto-crear-historia'>Crear historia</span>
         </div>
-        <div className="flex items-center justify-center w-3/4 relative historias-navegacion mx-1">
+        {/* w-3/4: usara la cuarta parte del contenedor principal */}
+        <div className="flex items-center justify-center w-3/4 relative mx-1">
           {showLeftButton && (
-            <button className="bg-gray-400 w-12 h-12 rounded-full text-lg font-bold flex items-center justify-center cursor-pointer absolute left-0 z-10"
-            onClick={scrollIzquierda} style={{ color: '#ffffff',zIndex: 1000,  }}
+            <button className="btn-historia-left bg-gray-400 w-12 h-12 rounded-full text-lg font-bold flex items-center justify-center cursor-pointer absolute left-0 z-10"
+            onClick={scrollIzquierda}
             >
               &lt;
             </button>
@@ -202,9 +203,9 @@ export const Historias = () => {
             &gt;
           </button>
         </div>
-        <div style={{marginLeft:'10px', minWidth: '165px', marginTop: '20px' }} className="amigos-panel bg-gray-100 p-2 rounded hidden lg:block">
-          <button style={{ backgroundColor: '#ffffff', color: '#464543', fontFamily: 'Bitter, serif' }} onClick={irABuscarAmigos}
-            className="bg-blue-500 text-white p-2 rounded mb-4"
+        {/* md: es para pantallas medianas (tablets) */}
+        <div className="amigos-panel p-2 rounded hidden lg:block w-1/4 md:w-1/2 mx-2">
+          <button  onClick={irABuscarAmigos} className="btn-buscar-amigos bg-blue-500 p-2 rounded mb-4"
           >
             Buscar amigos
           </button>
