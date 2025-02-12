@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "a54321",
+    "database": "practicaspp",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "a54321",
+    "database": "practicaspp",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "a54321",
+    "database": "practicaspp",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}
