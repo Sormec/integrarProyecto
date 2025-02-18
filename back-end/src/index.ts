@@ -1,22 +1,36 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
-import router from './routers/router';
+import routerPrincipal from './routers/router';
 import { ConfigEnv } from './config/constEnv';
+import sequelize from './config/database';
+import { actualizarHistorias } from "./controller/historias.controller";
+
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+app.use(express.json());
+app.use('/api', routerPrincipal);
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
-}));
+// Sincronizar la BD
+const conectarDB = async () => {
+  try {
+    await sequelize.sync({ force: false }) // `force: true` elimina y recrea las tablas en cada reinicio
+    console.log("Base de datos sincronizada");
+  
+  } catch (error) {
+    console.error("Error al sincronizar:", error);
+  }
+};
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// Iniciar servidor
+const iniciarServidor = () => {
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}/api`);
+  });
+};
 
-app.use(cookieParser());
-app.use('/api', router);
+// Ejecutar funciones
+conectarDB().then(iniciarServidor);
 
-app.listen(ConfigEnv.port, () => {
-  console.log(`Servidor corriendo en el puerto ${ConfigEnv.port}`);
-});
+// Cambiar el estado de las historias a inactivo después de 24 horas
+setInterval(actualizarHistorias, 60 * 1000); // 1min
+
