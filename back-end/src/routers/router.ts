@@ -70,7 +70,7 @@ router.post('/historias/favoritas/marcar', crearHistoriaFavorita);
 
 // ACCIÓN: Elimina una historia favorita por su id especifico
 // MÉTODO: DELETE
-// URL:    http://localhost:3306/historias/favoritas/:numero(id)_de_la_historiaFavorita
+// URL:    http://localhost:3306/api/historias/favoritas/:numero(id)_de_la_historiaFavorita
 // PARÁMETRO (numero(id)_de_la_historiaFavorita): ID de la HistoriaFavorita que se desea eliminar
 // PETICIÓN JSON:
 // { }
