@@ -18,11 +18,9 @@ router.post('/login', login);
 //Historias
 // ACCIÓN: Obtiene historias del usuario y sus amigos
 // MÉTODO: GET
-// URL:    http://localhost:3306/api/historias
-// PETICIÓN JSON: 
-// {
-//   "usuario_id": 4
-// }
+// URL:    http://localhost:3306/api/historias?usuario_id=${usuario_id}
+// PARAMETROS: 
+// usuario_id = usuario ID especifico que realiza la consulta 
 router.get('/historias', leerHistorias);
 
 // ACCIÓN: Subir nueva historia

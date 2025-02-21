@@ -3,12 +3,21 @@ import routerPrincipal from './routers/router';
 import { ConfigEnv } from './config/constEnv';
 import sequelize from './config/database';
 import { actualizarHistorias } from "./controller/historias.controller";
+import cors from "cors";
 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// Configurar CORS correctamente
+app.use(cors({
+  origin: "http://localhost:3000", // Reemplázalo con la URL del frontend
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
 app.use(express.json());
 app.use('/api', routerPrincipal);
+const PORT = process.env.PORT || 3000;
 
 // Sincronizar la BD
 const conectarDB = async () => {
@@ -32,5 +41,5 @@ const iniciarServidor = () => {
 conectarDB().then(iniciarServidor);
 
 // Cambiar el estado de las historias a inactivo después de 24 horas
-setInterval(actualizarHistorias, 60 * 1000); // 1min
+// setInterval(actualizarHistorias, 60 * 1000); // 1min
 

@@ -17,7 +17,15 @@ export const leerHistorias = async (req: Request, res: Response): Promise<Respon
     // Decodificar el token para obtener el ID del usuario autenticado
     // const decodedToken = jwt.verify(token, ConfigEnv.secret_key) as JwtPayload;
     
-    const { usuario_id } = req.body;
+    // Extraer usuario_id de los parámetros de consulta en lugar del cuerpo de la solicitud
+    const usuario_id = parseInt(req.query.usuario_id as string, 10);
+
+    // Verificar si usuario_id es válido
+    if (isNaN(usuario_id)) {
+      return res.status(400).json({ message: "El usuario_id es requerido y debe ser un número válido." });
+    }
+
+    //const { usuario_id } = req.body;
     // Obtener la lista de amigos del usuario autenticado
     const amigos = await Amigo.findAll({
       where: {
@@ -153,7 +161,14 @@ export const eliminarHistoria = async (req: Request, res: Response): Promise<Res
 // Obtiene historias favoritas del usuario
 export const leerHistoriasFavoritas = async (req: Request, res: Response): Promise<Response> => {
   try {    
-    const { usuario_id } = req.body;
+    // const { usuario_id } = req.body;
+
+    const usuario_id = parseInt(req.query.usuario_id as string, 10);
+
+    // Verificar si usuario_id es válido
+    if (isNaN(usuario_id)) {
+      return res.status(400).json({ message: "El usuario_id es requerido y debe ser un número válido." });
+    }
     // Obtener variables de la petición para mayor legibilidad
     const var_usuario = usuario_id;
     
