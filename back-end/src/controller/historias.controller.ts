@@ -5,7 +5,7 @@ import Historia from "../models/Historia";
 import HistoriaFavorita from "../models/HistoriaFavorita";
 import Usuario from "../models/Usuario";
 import Amigo from '../models/Amigo';
-import { Op } from "sequelize";
+import { Op, col, fn } from "sequelize";
 
 // Obtiene historias del usuario y sus amigos
 export const leerHistorias = async (req: Request, res: Response): Promise<Response> => {
@@ -25,21 +25,28 @@ export const leerHistorias = async (req: Request, res: Response): Promise<Respon
       return res.status(400).json({ message: "El usuario_id es requerido y debe ser un número válido." });
     }
 
-    //const { usuario_id } = req.body;
-    // Obtener la lista de amigos del usuario autenticado
+    // Obtener variable de la petición para mayor legibilidad
+    const var_usuario = usuario_id;
+
+    // Obtener los IDs de los amigos del usuario autenticado
     const amigos = await Amigo.findAll({
       where: {
-        [Op.or]: [{ usuario_id: usuario_id }, { amigo_id: usuario_id }],
+        [Op.or]: [
+          { usuario_id: var_usuario },
+          { amigo_id: var_usuario },
+        ],
       },
-      attributes: ["usuario_id", "amigo_id"],
     });
 
-    const amigosIds = amigos.flatMap((amigo) => [amigo.usuario_id, amigo.amigo_id]);
-    amigosIds.push(usuario_id);
+    // Extraer solo los IDs de amigos
+    const amigosIds = amigos.map((amigo) =>
+      amigo.usuario_id === var_usuario ? amigo.amigo_id : amigo.usuario_id
+    );
 
     // Obtener historias del usuario y sus amigos
-    const historiasFiltradas = await Historia.findAll({
+    const historias = await Historia.findAll({
       attributes: [
+        [col("Usuario.nombre"), "usuario_nombre"], // Nombre del usuario al inicio
         "id",
         "imagen",
         "video",
@@ -48,22 +55,30 @@ export const leerHistorias = async (req: Request, res: Response): Promise<Respon
         "fecha_publicacion",
         "favorito",
         "estado",
-        "usuario_id",
+        [
+          fn("COUNT", col("Historia.id")), // Contador de historias por usuario
+          "total_historias",
+        ],
       ],
       include: [
         {
           model: Usuario,
-          attributes: ["nombre"],
+          attributes: [], // Evita anidar los datos dentro de Usuario
+          required: true,
         },
       ],
       where: {
-        usuario_id: { [Op.in]: amigosIds }, // Filtrar historias de usuario autenticado o amigos
+        [Op.or]: [
+          { usuario_id: var_usuario }, // Historias propias
+          { usuario_id: { [Op.in]: amigosIds } }, // Historias de amigos
+        ],
         estado: "activo",
       },
       order: [["fecha_publicacion", "DESC"]],
+      group: ["Historia.id", "Usuario.nombre"], // Agrupar por historia y usuario
     });
 
-    return res.status(200).json(historiasFiltradas);    
+    return res.status(200).json(historias);    
   } catch (error) {
     console.error('Error al obtener las historias: ', error);
     return res.status(500).json({ message: 'Error interno del servidor' });

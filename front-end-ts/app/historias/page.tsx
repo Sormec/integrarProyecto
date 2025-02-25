@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { FaPlus } from 'react-icons/fa';
 import ReactPlayer from 'react-player';
-import { obtenerHistorias, obtenerFavoritas } from '@/app/servicios/HistoriaService';
+import { obtenerHistorias, obtenerFavoritas } from '@/app/services/HistoriaService';
 import { Historia, HistoriasPorUsuarioMap }  from '@/app/interfaces/Historia';
 
 // Definición de interfaces
@@ -171,11 +171,11 @@ export default function HistoriasPage() {
   };
   
   const handleCrearHistoria = () => {
-    router.push('/dashboard/historias/crear');
+    router.push('historias/crear');
   };
 
   const handleVistaUsuarios = () => {
-    router.push(`/dashboard/historias/vista-usuarios/`);
+    router.push(`/historias/vista-usuarios/`);
   };
 
 
@@ -300,7 +300,7 @@ export default function HistoriasPage() {
                         </p>
                       </div>
                     )}
-                    <strong style={{color:'Black', fontSize: '15px'}} className="mt-auto text-lg nombres_U text-white">
+                    <strong style={{color:'white', fontSize: '15px'}} className="mt-auto text-lg nombres_U text-white">
                       {usuario === usuarioActual ? 'Tu historia' : historia.usuario_nombre}
                     </strong>
                   </div>

@@ -1,4 +1,4 @@
-import { Historia } from "../interfaces/Historia";
+// import { Historia } from "../interfaces/Historia";
 
 export const obtenerHistorias = async (usuario_id: number) => {
     if (!usuario_id) {
@@ -14,8 +14,8 @@ export const obtenerHistorias = async (usuario_id: number) => {
       }
             
       const data = await response.json();
-      console.log(eliminarDuplicados(data));
-      return eliminarDuplicados(data);
+      console.log(data); // Se envia por consola para ver la respuesta
+      return data;
     } catch (error) {
       console.error("Error al obtener historias:", error);
       return [];
@@ -36,14 +36,15 @@ export const obtenerFavoritas = async (usuario_id: number) => {
       }
             
       const data = await response.json();
-      console.log(eliminarDuplicados(data));
-      return eliminarDuplicados(data);
+      console.log(data); // Se envia por consola para ver la respuesta
+      return data;
     } catch (error) {
       console.error("Error al obtener historias favoritas:", error);
       return [];
     }
 };
 
-const eliminarDuplicados = (arr: Historia[]) => {
-    return arr.filter((item, index, self) => self.findIndex((t) => t.id === item.id) === index);
-};
+// Elimina los historias duplicadas, pero eso ya esta resuelto
+// const eliminarDuplicados = (arr: Historia[]) => {
+//     return arr.filter((item, index, self) => self.findIndex((t) => t.id === item.id) === index);
+// };
