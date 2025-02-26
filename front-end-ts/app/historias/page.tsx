@@ -80,15 +80,6 @@ export default function HistoriasPage() {
     );
   };
 
-  // Obtiene las historias ordenadas, primero la de usuario actual
-  const historiasOrdenadas = (): HistoriaPorUsuario[] => {
-    const historiasRecientes = historiasMasRecientes();
-    
-    return historiasRecientes.sort((a, b) => 
-      a.usuario === usuarioActual ? -1 : b.usuario === usuarioActual ? 1 : 0
-    );
-  };
-
   // const irABuscarAmigos = () => {
   //   router.push('/amigos');
   // };
@@ -96,8 +87,8 @@ export default function HistoriasPage() {
   useEffect(() => {
     const container = document.getElementById('historias-container');
     container?.addEventListener('scroll', handleScroll);
-    // ususario_id = 2 es María López
-    // ususario_id = 4 es Juan Pérez
+    // usuario_id = 2 es María López
+    // usuario_id = 4 es Juan Pérez
     // const varNombre = "Juan Pérez"; // usuario quemado 
     const usuario_id = 4; // Usuario quemado (Juan Pérez)
     const usuario_nombre = "Juan Pérez"; // Nombre quemado
@@ -204,6 +195,7 @@ export default function HistoriasPage() {
             </button>
           )}
           <div id="historias-container" className="flex overflow-x-hidden scroll-smooth w-full py-5">                
+            {/* Recuadro de historias favoritas  */}
             <div className="flex flex-col justify-center items-center w-15 h-15 box-border historia cursor-pointer">
                 {historiasFavoritas.length -1 > 0 && (
                     <div style={{ minWidth: '120px', height: '200px', marginRight: '8px' }}
@@ -232,25 +224,6 @@ export default function HistoriasPage() {
                                             <img style={{maxHeight: '130px', width:'100%'}} src={historia.imagen} alt="Historia" className="max-h-full max-w-full object-contain"/>
                                             </div>
                                         )}
-                                        {/* {historia.video && (
-                                            <div className="flex items-center justify-center h-full w-full">
-                                            <ReactPlayer 
-                                                url={historia.video}
-                                                light={historia.imagen || true}
-                                                width="110px"
-                                                height="130px"
-                                                playing={false}
-                                                controls={false}
-                                                muted={true}
-                                                style={{ objectFit: 'cover', maxWidth: '110px', maxHeight: '130px' }}
-                                                />
-
-                                            
-                                            <p className="absolute text-center px-2 py-1 rounded" style={{ color: historia.colortexto, userSelect: 'none' }}>
-                                                {historia.texto}
-                                            </p>
-                                            </div>
-                                        )} */}
                                         {historia.video && (
                                             <div className="flex items-center justify-center h-full w-full">
                                                 <VideoPlayer url={historia.video} imagen={historia.imagen} />
@@ -269,7 +242,8 @@ export default function HistoriasPage() {
                     </div>
                 )}
             </div>
-            {historiasOrdenadas().map(({ usuario, historia, cantidadHistorias }) => (
+            {/* Recuadro de historias del usuario y sus amigos  */}
+            {historiasMasRecientes().map(({ usuario, historia, cantidadHistorias }) => (
               <div key={usuario} style={{ border: '2px solid #464543' }} className="relative flex flex-col items-center mx-2">
                 <div style={{ maxWidth: '120px', height: '200px', position: 'relative', overflow: 'hidden' }}
                   className="flex flex-col justify-between items-center w-15 h-15 border border-gray-300 p-2 box-border historia cursor-pointer"
