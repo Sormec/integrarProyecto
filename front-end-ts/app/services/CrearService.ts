@@ -27,16 +27,15 @@ export const guardarHistoria = async (
       };
       
     } else if (modo == 'video'){
-    // REVISAR COMO GUARDA CUANDO ES VIDEO
-    //   varBody = {
-    //     usuario_id,
-    //     imagen: imagenBase64,
-    //     tipoLetra,
-    //     fondo,
-    //     video: videoUrl,
-    //     texto,
-    //     colorTextoI
-    //   };
+      varBody = {
+        usuario_id,
+        imagen: "",
+        tipoLetra,
+        fondo,
+        video: videoUrl,
+        texto,
+        colorTextoI
+      };
     }
   
     try {
