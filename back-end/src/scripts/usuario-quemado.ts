@@ -1,10 +1,13 @@
 import sequelize from "../config/database";
 import Usuario from "../models/Usuario";
-import jwt from "jsonwebtoken";
-import express, { Request, Response } from "express";
-import { ConfigEnv } from "../config/constEnv"; // Configuración de claves
 import { login } from "../controller/login.controller.";
 
+/*
+  El siguiente script simula la petición de un inicio de sesión
+  para verificar el funcionamiento del login, si no encuentra el usuario
+  en la base de datos lo crea en el mismo script.
+  El script se ejecuta antes de index.ts 
+*/
 
 // Datos del usuario predefinido
 const DEFAULT_USER = {
@@ -42,11 +45,11 @@ const creaUserQuemado_login = async () => {
     const fakeResponse = {
       status: (code: number) => ({
         json: (data: any) => {
-          console.log(`🔑 Login Simulado -> Código: ${code}`, data);
+          console.log(`🔑 Login Simulado -> Código: ${code}\n`, data);
         },
       }),
       cookie: (name: string, value: string) => {
-        console.log(`🍪 Cookie establecida -> ${name}: ${value}`);
+        // console.log(`🍪 Cookie establecida -> ${name}: ${value}`);
       },
     } as any;
   

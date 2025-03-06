@@ -4,6 +4,7 @@ import { ConfigEnv } from './config/constEnv';
 import sequelize from './config/database';
 import { actualizarHistorias } from "./controller/historias.controller";
 import cors from "cors";
+import path from "path";
 
 
 const app = express();
@@ -17,7 +18,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/api', routerPrincipal);
-const PORT = process.env.PORT || 3000;
+const PORT = ConfigEnv.port;
 
 // Sincronizar la BD
 const conectarDB = async () => {
@@ -43,3 +44,5 @@ conectarDB().then(iniciarServidor);
 // Cambiar el estado de las historias a inactivo después de 24 horas
 // setInterval(actualizarHistorias, 60 * 1000); // 1min
 
+// Servir archivos estáticos para su visualización en el Navegador desde la carpeta 'imágenesGuardadas'
+app.use("/api/imagenesGuardadas", express.static(path.join(__dirname, "imagenesGuardadas")));

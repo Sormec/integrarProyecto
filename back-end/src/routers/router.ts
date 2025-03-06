@@ -1,6 +1,7 @@
 import express from 'express';
-import { leerHistorias, crearHistoria, eliminarHistoria, crearHistoriaFavorita, leerHistoriasFavoritas, eliminarHistoriaFavorita } from '../controller/historias.controller';
+import { leerHistorias, crearHistoria, eliminarHistoria, crearHistoriaFavorita, leerHistoriasFavoritas, eliminarHistoriaFavorita, crearHistoriaImagen } from '../controller/historias.controller';
 import { login } from '../controller/login.controller.';
+import { upload } from "../config/multerConfig";
 
 const router = express.Router();
 
@@ -37,6 +38,23 @@ router.get('/historias', leerHistorias);
 //   "colortexto": "#000000"
 // }
 router.post('/historias/crear', crearHistoria);
+
+// ACCIÓN: Subir nueva historia de tipo 'foto'
+// MÉTODO: POST
+// URL:    http://localhost:3306/api/historias/crearImg
+// PETICIÓN FORM: Llenar en la petición de tipo 'Form'  
+// 1.
+// usuario_id=4&modo=foto&tipoLetra=Bitter&fondo=#0b7dec&texto=&colorTexto=&~imagen=1741227851848.png
+// 2.
+// usuario_id=4
+// modo=foto
+// tipoLetra=Bitter
+// fondo=#0b7dec
+// texto=*puede ser null*
+// colorTexto=*puede ser null*
+// imagen=1741227851848.png
+
+router.post('/historias/crearImg', upload.single("imagen"), crearHistoriaImagen);
 
 // ACCIÓN: Elimina una historia por su id especifico
 // MÉTODO: DELETE

@@ -2,9 +2,11 @@ import {Pool} from 'pg'
 import { ConfigEnv } from './constEnv';
 
 const pool = new Pool({
-  user: ConfigEnv.db_user, host: ConfigEnv.db_host,
-  database: ConfigEnv.db_database, password: ConfigEnv.db_password,
-  port: ConfigEnv.db_port as number,
+  user: ConfigEnv.db_user,
+  host: ConfigEnv.db_host,
+  database: ConfigEnv.db_database,
+  password: ConfigEnv.db_password,
+  port: ConfigEnv.db_port,
 });
 
 pool.connect((err, client, release) => {

@@ -123,6 +123,49 @@ export const crearHistoria = async (req: Request, res: Response): Promise<Respon
     return res.status(500).json({ message: "Error al subir la historia" });
   }
 };
+// Subir nueva historia solo de tipo 'foto'
+export const crearHistoriaImagen = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const { usuario_id, tipoLetra, fondo, texto, colortexto, imagen } = req.body;
+    
+    // Validación de datos obligatorios
+    if (!usuario_id || !imagen) {
+      return res.status(400).json({ message: "Faltan datos obligatorios" });
+    }
+    
+    // Verificar si el usuario existe
+    const usuario = await Usuario.findByPk(usuario_id);
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Obtener la URL base del servidor dinámicamente
+    const host = req.protocol + "://" + req.get("host"); // Obtiene el host desde la petición
+    const imagenNombre = imagen;
+    const imagenUrl = `${host}/api/imagenesGuardadas/${imagenNombre}`; // URL completa de la imagen
+
+
+    // Crear la historia con arhivo de imagen y Sequelize
+    const historia = await Historia.create({
+      usuario_id,
+      imagen: imagenUrl || null,
+      tipoletra: tipoLetra || null,
+      fondo: fondo || null,
+      texto: texto || null,
+      colortexto: colortexto || null,
+      estado: "activo",
+      fecha_publicacion: new Date(),
+    });
+
+    return res.status(201).json({
+      message: "Historia con foto subida exitosamente",
+      historia,
+    });
+  } catch (error) {
+    console.error("Error al subir la historia:", error);
+    return res.status(500).json({ message: "Error al subir la historia" });
+  }
+};
 
 // Cambiar el estado de las historias a inactivo después de 24 horas
 export const actualizarHistorias = async (): Promise<void> => {
