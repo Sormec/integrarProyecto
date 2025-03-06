@@ -1,4 +1,5 @@
 /node_modules
 
 /dist
-
+# Ignora los archivos dentro de la carpeta (no se necesita trackearlos)
+/src/imagenesGuardadas/**
