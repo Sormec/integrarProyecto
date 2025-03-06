@@ -126,10 +126,11 @@ export const crearHistoria = async (req: Request, res: Response): Promise<Respon
 // Subir nueva historia solo de tipo 'foto'
 export const crearHistoriaImagen = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const { usuario_id, tipoLetra, fondo, texto, colortexto, imagen } = req.body;
+    const { usuario_id, tipoLetra, fondo, texto, colortexto } = req.body;
+    const imagenVar = req.file;
     
     // Validación de datos obligatorios
-    if (!usuario_id || !imagen) {
+    if (!usuario_id || !imagenVar) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
     
@@ -141,7 +142,7 @@ export const crearHistoriaImagen = async (req: Request, res: Response): Promise<
 
     // Obtener la URL base del servidor dinámicamente
     const host = req.protocol + "://" + req.get("host"); // Obtiene el host desde la petición
-    const imagenNombre = imagen;
+    const imagenNombre = imagenVar.filename;
     const imagenUrl = `${host}/api/imagenesGuardadas/${imagenNombre}`; // URL completa de la imagen
 
 

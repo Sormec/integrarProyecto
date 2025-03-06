@@ -8,14 +8,13 @@ import ReactPlayer from 'react-player';
 import ReactDOM from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
-import { guardarHistoria } from '@/app/services/CrearService';
+import { guardarHistoria, guardarHistoriaImagen } from '@/app/services/CrearService';
 
 export default function CrearPage() {
     const [mostrarPopup, setMostrarPopup] = useState<boolean>(false);
     const [imagen, setImagen] = useState<File | null>(null);
     const [video, setVideo] = useState<string | undefined>(undefined);
     const [imagenPrevia, setImagenPrevia] = useState<string>('');
-
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -52,10 +51,10 @@ export default function CrearPage() {
         setMostrarPopup(false);
     };
 
-
+    // Abre el explorador de archivos del computador
     const handleAbrirExplorador = () => {
         if (fileInputRef.current) {
-          fileInputRef.current.click(); // Abre el explorador de archivos
+          fileInputRef.current.click(); 
         }
     };
     // Cambia el popup para una historia de foto
@@ -147,12 +146,11 @@ export default function CrearPage() {
             throw error;
         }
     };
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const convertirImagenABase64 = (imagen: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.src = URL.createObjectURL(imagen);
+    // Crear la imagen con el input de texto encima
+    const procesarImagen = async (imagen: File, texto: string, tipoLetra: string, colorTextoI: string) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(imagen);
+        const promesaArchivo = new Promise<File> ((resolve, reject) => {
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -164,21 +162,39 @@ export default function CrearPage() {
                 canvas.width = img.width;
                 canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
-                ctx.font = `30px ${historiaVar.tipoLetra}`;
-                ctx.fillStyle = historiaVar.colorTextoI;
+    
+                // Configuración del texto
+                ctx.font = `30px ${tipoLetra}`;
+                ctx.fillStyle = colorTextoI;
                 ctx.textAlign = 'center';
     
+                // Posiciona el texto en el centro
                 const x = canvas.width / 2;
                 const y = canvas.height / 2;
-                historiaVar.texto.split('\n').forEach((line, index) => {
+                texto.split("\n").forEach((line, index) => {
                     ctx.fillText(line, x, y + index * 40);
                 });
     
-                const imagenBase64 = canvas.toDataURL(); // Convierte la imagen a Base64
-                resolve(imagenBase64); // Retorna la imagen procesada
+                // Convertir a Blob y crear un archivo
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        const archivoFinal = new File([blob], imagen.name+"_editada.png", { type: "image/png" });
+                        resolve(archivoFinal);
+                    } else {
+                        reject("Error al generar la imagen final");
+                    }
+                }, "image/png");
             };
+
             img.onerror = (error) => reject(error);
         });
+
+        try {
+            const archivo = await promesaArchivo;
+            return archivo;
+        } catch (error) {
+            throw error;
+        }
     };
     // Enviar historia
     const subirHistoria = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -189,11 +205,17 @@ export default function CrearPage() {
 
         // Procesa historias en modo "foto"
         if (historiaVar.modo === 'foto' && imagen) {
-            const img = new Image();
-            img.src = URL.createObjectURL(imagen);
-            imagenBase64 = await convertirImagenABase64(imagen);
-            console.log("IMAGEN: ", imagenBase64);
-            const result = await guardarHistoria(historiaVar.modo, usuario_id, imagenBase64, historiaVar.tipoLetra, historiaVar.fondo, "", historiaVar.texto, historiaVar.colorTextoI);
+            const imagenProcesada = await procesarImagen(imagen, historiaVar.texto, historiaVar.tipoLetra, historiaVar.colorTextoI);
+            const formData = new FormData();
+            formData.append("usuario_id", usuario_id.toString());
+            formData.append("modo", "foto");
+            formData.append("imagen", imagenProcesada);
+            formData.append("tipoLetra", historiaVar.tipoLetra);
+            formData.append("fondo", historiaVar.fondo);
+            formData.append("texto", historiaVar.texto);
+            formData.append("colorTexto", historiaVar.colorTextoI);
+
+            const result = await guardarHistoriaImagen(formData);
             if (result) {
                 resetEstados();
                 router.push("/historias");
@@ -201,7 +223,7 @@ export default function CrearPage() {
         }
 
         // Procesa historias en modo "texto"
-        else if (historiaVar.modo === "texto" && canvasRef.current) {
+        else if (historiaVar.modo === 'texto' && canvasRef.current) {
             const canvas = canvasRef.current;
             const ctx = canvas.getContext("2d");
             if (!ctx) return;

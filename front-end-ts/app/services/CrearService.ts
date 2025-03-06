@@ -61,3 +61,32 @@ export const guardarHistoria = async (
     }
   };
   
+export const guardarHistoriaImagen = async (formData: FormData): Promise<boolean> => {
+    
+    if (formData.get("usuario_id") === null) {
+      console.error("Error: usuario_id es requerido para guardar una historia.");
+      return false;
+    }
+  
+    try {
+      const response = await fetch("http://localhost:3306/api/historias/crearImg", {
+        method: "POST",
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error en la subida de historia con foto:", errorData);
+        return false;
+        
+      } else {
+        console.log("Arreglo: ", await response.json()); // Se muestra por consola la respuesta
+        return true;
+      }
+  
+    } catch (error) {
+      console.error("Error al subir la historia con foto:", error);
+      return false;
+    }
+  };
+  
