@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import { guardarHistoria, guardarHistoriaImagen } from '@/app/services/CrearService';
+import { Historia } from '@/app/interfaces/Historia';
 
 export default function CrearPage() {
     const [mostrarPopup, setMostrarPopup] = useState<boolean>(false);
@@ -19,12 +20,18 @@ export default function CrearPage() {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     // Estado unificado para la historia
-    const [historiaVar, setHistoriaVar] = useState({
+    const [historiaVar, setHistoriaVar] = useState<Historia>({
+        id: 2, // Usuario quemado (Juan Pérez)
+        usuario_nombre: "Juan Pérez", // Usuario quemado
         modo: "foto",
-        texto: "",
         tipoLetra: "Bitter",
         fondo: "#0b7dec",
-        colorTextoI: "#000000",
+        texto: "",
+        colorTexto: "#000000",
+        video: undefined,
+        imagen: undefined,
+        fecha_creacion: new Date().toISOString(), // Se instancia pero no se usa
+        favorito: false,
     });
 
     // Limpia las variables utilizadas al editar una historia
@@ -32,7 +39,19 @@ export default function CrearPage() {
         setImagen(null);
         setImagenPrevia('');
         setVideo('');
-        setHistoriaVar({ modo: "foto", texto: "", tipoLetra: "Bitter", fondo: "#0b7dec", colorTextoI: "#000000" });
+        setHistoriaVar({
+            id: 2, // Usuario quemado (Juan Pérez)
+            usuario_nombre: "Juan Pérez", // Usuario quemado
+            modo: "foto",
+            tipoLetra: "Bitter",
+            fondo: "#0b7dec",
+            texto: "",
+            colorTexto: "#000000",
+            video: undefined,
+            imagen: undefined,
+            fecha_creacion: new Date().toISOString(),
+            favorito: false,
+        });
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
     // Cambia el popup para una historia de texto
@@ -84,6 +103,7 @@ export default function CrearPage() {
         if (historiaVar.modo === 'foto' && imagen) {
             const img = new Image();
             img.src = URL.createObjectURL(imagen); //Genera un url temporal
+            const textoI = historiaVar.texto as string; // Instanciar con string para su correcto uso
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -94,11 +114,11 @@ export default function CrearPage() {
 
                 ctx.drawImage(img, 0, 0);
                 ctx.font = `30px ${historiaVar.tipoLetra}`;
-                ctx.fillStyle = historiaVar.colorTextoI;
+                ctx.fillStyle = historiaVar.colorTexto as string;
                 ctx.textAlign = 'center';
                 const x = canvas.width / 2;
                 const y = canvas.height / 2;
-                const lines = historiaVar.texto.split('\n');
+                const lines = textoI.split('\n');
 
                 lines.forEach((line, index) => {
                     ctx.fillText(line, x, y + index * 40); // Escribe cada línea en el canvas
@@ -107,13 +127,13 @@ export default function CrearPage() {
                 setImagenPrevia(canvas.toDataURL()); // Al guardar en la variable se cambia visualmente
             };
         }
-    }, [imagen, historiaVar.texto, historiaVar.tipoLetra, historiaVar.modo, historiaVar.colorTextoI]);
+    }, [imagen, historiaVar.texto, historiaVar.tipoLetra, historiaVar.modo, historiaVar.colorTexto]);
     // Ejecuta la función 'generar..' cuando (modo === foto)
     useEffect(() => {
         if (historiaVar.modo === 'foto') {
             generarVistaPreviaFoto();
         }
-    }, [imagen, historiaVar.texto, historiaVar.tipoLetra, historiaVar.modo, historiaVar.colorTextoI, generarVistaPreviaFoto]); // Dependencias
+    }, [imagen, historiaVar.texto, historiaVar.tipoLetra, historiaVar.modo, historiaVar.colorTexto, generarVistaPreviaFoto]); // Dependencias
     // Crea un contenedor oculto para obtener la duracion del video
     const obtenerDuracionVideo = async (videoUrl: string): Promise<number> => {
         const playerContainer = document.createElement('div'); // Contenedor temporal
@@ -147,7 +167,7 @@ export default function CrearPage() {
         }
     };
     // Crear la imagen con el input de texto encima
-    const procesarImagen = async (imagen: File, texto: string, tipoLetra: string, colorTextoI: string) => {
+    const procesarImagen = async (imagen: File, texto: string, tipoLetra: string, colorTexto: string) => {
         const img = new Image();
         img.src = URL.createObjectURL(imagen);
         const promesaArchivo = new Promise<File> ((resolve, reject) => {
@@ -165,7 +185,7 @@ export default function CrearPage() {
     
                 // Configuración del texto
                 ctx.font = `30px ${tipoLetra}`;
-                ctx.fillStyle = colorTextoI;
+                ctx.fillStyle = colorTexto;
                 ctx.textAlign = 'center';
     
                 // Posiciona el texto en el centro
@@ -200,20 +220,25 @@ export default function CrearPage() {
     const subirHistoria = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Previene la acción predeterminada del formulario
 
-        const usuario_id = 4; // Usuario quemado (Juan Pérez)
+        const usuario_id = 2; // Usuario quemado (Juan Pérez)
         let imagenBase64: string | null = null; // Inicializa la variable para imágenes
 
         // Procesa historias en modo "foto"
         if (historiaVar.modo === 'foto' && imagen) {
-            const imagenProcesada = await procesarImagen(imagen, historiaVar.texto, historiaVar.tipoLetra, historiaVar.colorTextoI);
+            const imagenProcesada = await procesarImagen(
+                imagen,
+                historiaVar.texto as string,
+                historiaVar.tipoLetra as string,
+                historiaVar.colorTexto as string
+            );
             const formData = new FormData();
             formData.append("usuario_id", usuario_id.toString());
             formData.append("modo", "foto");
             formData.append("imagen", imagenProcesada);
-            formData.append("tipoLetra", historiaVar.tipoLetra);
-            formData.append("fondo", historiaVar.fondo);
-            formData.append("texto", historiaVar.texto);
-            formData.append("colorTexto", historiaVar.colorTextoI);
+            formData.append("tipoLetra", historiaVar.tipoLetra as string);
+            formData.append("fondo", historiaVar.fondo as string);
+            formData.append("texto", historiaVar.texto as string);
+            formData.append("colorTexto", historiaVar.colorTexto as string);
 
             const result = await guardarHistoriaImagen(formData);
             if (result) {
@@ -226,20 +251,21 @@ export default function CrearPage() {
         else if (historiaVar.modo === 'texto' && canvasRef.current) {
             const canvas = canvasRef.current;
             const ctx = canvas.getContext("2d");
+            const textoI = historiaVar.texto as string;
             if (!ctx) return;
 
             canvas.width = 340;
             canvas.height = 630;
-            ctx.fillStyle = historiaVar.fondo;
+            ctx.fillStyle = historiaVar.fondo as string;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.font = `30px ${historiaVar.tipoLetra}`;
             ctx.fillStyle = "#ffffff";
 
-            const lines = historiaVar.texto.split("\n");
+            const lines = textoI.split("\n");
             lines.forEach((line, index) => ctx.fillText(line, canvas.width / 2, (canvas.height / 2) + index * 50));
 
             imagenBase64 = canvas.toDataURL();
-            const result = await guardarHistoria(historiaVar.modo, usuario_id, imagenBase64, historiaVar.tipoLetra, historiaVar.fondo, "", historiaVar.texto, historiaVar.colorTextoI);
+            const result = await guardarHistoria(historiaVar.modo, usuario_id, imagenBase64, historiaVar.tipoLetra, historiaVar.fondo, "", historiaVar.texto, historiaVar.colorTexto);
             if (result) {
                 resetEstados();
                 router.push("/historias");
@@ -261,7 +287,7 @@ export default function CrearPage() {
                     return;
                 }
 
-                const result = await guardarHistoria(historiaVar.modo, usuario_id, "", historiaVar.tipoLetra, historiaVar.fondo, video, historiaVar.texto, historiaVar.colorTextoI);
+                const result = await guardarHistoria(historiaVar.modo, usuario_id, "", historiaVar.tipoLetra, historiaVar.fondo, video, historiaVar.texto, historiaVar.colorTexto);
                 if (result) {
                     resetEstados();
                     router.push("/historias");
@@ -343,7 +369,7 @@ export default function CrearPage() {
                                                     </div>
                                                     {/* INPUT SELECCIONAR COLOR DE LETRA */}
                                                     <div className="flex justify-start">
-                                                        <input type="color" name="colorTextoI" value={historiaVar.colorTextoI} onChange={handleChange} className="border border-gray-400 rounded"
+                                                        <input type="color" name="colorTexto" value={historiaVar.colorTexto} onChange={handleChange} className="border border-gray-400 rounded"
                                                             style={{ width: '300px', height: '50px' }} />
                                                     </div>
                                                     {/* Botones para Compartir o Descartar historia */}
@@ -428,7 +454,7 @@ export default function CrearPage() {
                                             <textarea name="texto" value={historiaVar.texto} onChange={handleChange} style={{ width: '300px', height: '300px' }}  maxLength={200}
                                                 className="p-2 border border-gray-400 rounded resize-none" placeholder="Escribe aquí tu texto" />
                                             {/* INPUT SELECCIONAR COLOR DE FONDO */}
-                                            <input type="color" name="colorTextoI" value={historiaVar.colorTextoI} onChange={handleChange} className="border border-gray-400 rounded"
+                                            <input type="color" name="colorTexto" value={historiaVar.colorTexto} onChange={handleChange} className="border border-gray-400 rounded"
                                                 style={{ width: '300px', height: '50px' }} />
                                             {/* Botones para Compartir o Descartar historia */}
                                             <div style={{ width: '300px' }} className="flex space-x-2">
@@ -444,7 +470,7 @@ export default function CrearPage() {
                                         <div style={{ marginLeft: '120px' }} className="relative flex items-center justify-center w-full h-full">
                                             <ReactPlayer url={video} width='100%' height="480px" className="border border-gray-400 rounded p-2" />
                                             <div style={{
-                                                position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: historiaVar.colorTextoI,
+                                                position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: historiaVar.colorTexto,
                                                 fontSize: '24px', textAlign: 'center', width: '100%',
                                             }}>
                                                 {historiaVar.texto}

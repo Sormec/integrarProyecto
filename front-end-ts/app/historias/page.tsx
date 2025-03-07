@@ -90,8 +90,8 @@ export default function HistoriasPage() {
     // usuario_id = 2 es María López
     // usuario_id = 4 es Juan Pérez
     // const varNombre = "Juan Pérez"; // usuario quemado 
-    const usuario_id = 4; // Usuario quemado (Juan Pérez)
-    const usuario_nombre = "Juan Pérez"; // Nombre quemado
+    const usuario_id = 2; // Usuario quemado (Juan Pérez)
+    const usuario_nombre = "María López"; // Nombre quemado
 
     const fetchData = async () => {
       try {
@@ -228,7 +228,7 @@ export default function HistoriasPage() {
                                             <div className="flex items-center justify-center h-full w-full">
                                                 <VideoPlayer url={historia.video} imagen={historia.imagen} />
                                                 <p className="absolute text-center px-2 py-1 rounded" 
-                                                style={{ color: historia.colortexto || 'black', userSelect: 'none' }}>
+                                                style={{ color: historia.colorTexto || 'black', userSelect: 'none' }}>
                                                 {historia.texto}
                                                 </p>
                                             </div>
@@ -269,7 +269,7 @@ export default function HistoriasPage() {
                       <div className="flex items-center justify-center h-full w-full">
                         <ReactPlayer url={historia.video} light={historia.imagen || true} style={{ objectFit: 'cover', maxWidth: '110px', maxHeight: '130px' }}
                           playing={false}/>
-                        <p className="absolute text-center px-2 py-1 rounded" style={{ color: historia.colortexto, userSelect: 'none' }}>
+                        <p className="absolute text-center px-2 py-1 rounded" style={{ color: historia.colorTexto, userSelect: 'none' }}>
                           {historia.texto}
                         </p>
                       </div>
