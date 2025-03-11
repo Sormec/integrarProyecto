@@ -21,8 +21,9 @@ export default function CrearPage() {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     // Estado unificado para la historia
     const [historiaVar, setHistoriaVar] = useState<Historia>({
-        id: 2, // Usuario quemado (Juan Pérez)
-        usuario_nombre: "Juan Pérez", // Usuario quemado
+        id: 0, 
+        usuario_id: 2, // Usuario quemado María López(2) o Juan Pérez(4)
+        usuario_nombre: "María López", // Usuario quemado
         modo: "foto",
         tipoLetra: "Bitter",
         fondo: "#0b7dec",
@@ -40,8 +41,9 @@ export default function CrearPage() {
         setImagenPrevia('');
         setVideo('');
         setHistoriaVar({
-            id: 2, // Usuario quemado (Juan Pérez)
-            usuario_nombre: "Juan Pérez", // Usuario quemado
+            id: 0, 
+            usuario_id: 2, // Usuario quemado
+            usuario_nombre: "María López", // Usuario quemado
             modo: "foto",
             tipoLetra: "Bitter",
             fondo: "#0b7dec",
@@ -220,7 +222,7 @@ export default function CrearPage() {
     const subirHistoria = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Previene la acción predeterminada del formulario
 
-        const usuario_id = 2; // Usuario quemado (Juan Pérez)
+        const usuario_id = historiaVar.usuario_id; // Usuario quemado
         let imagenBase64: string | null = null; // Inicializa la variable para imágenes
 
         // Procesa historias en modo "foto"

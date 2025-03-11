@@ -1,5 +1,6 @@
 export interface Historia {
     id: number;
+    usuario_id: number;
     usuario_nombre: string; // en la tabla solo esta el ID
     modo: string; // identifica si la historia es de tipo (foto,texto,video)
     tipoLetra?: string;

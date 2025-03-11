@@ -28,6 +28,8 @@ export default function HistoriasPage() {
   const [historiasFavoritas, setHistoriasFavoritas] = useState<Historia[]>([]);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const router = useRouter();
+  const usuarioIdVar = 2; // Usuario quemado María López(2) o Juan Pérez(4)
+  const usuario_nombre = "María López"; // Nombre quemado
 
   const scrollIzquierda = () => {
     const container = document.getElementById('historias-container');
@@ -87,18 +89,13 @@ export default function HistoriasPage() {
   useEffect(() => {
     const container = document.getElementById('historias-container');
     container?.addEventListener('scroll', handleScroll);
-    // usuario_id = 2 es María López
-    // usuario_id = 4 es Juan Pérez
-    // const varNombre = "Juan Pérez"; // usuario quemado 
-    const usuario_id = 2; // Usuario quemado (Juan Pérez)
-    const usuario_nombre = "María López"; // Nombre quemado
 
     const fetchData = async () => {
       try {
         const [historiasData, favoritasData] = await Promise.all([
-          obtenerHistorias(usuario_id),
+          obtenerHistorias(usuarioIdVar),
           // obtenerAmigos(),
-          obtenerFavoritas(usuario_id)
+          obtenerFavoritas(usuarioIdVar)
         ])
 
         setUsuarioActual(usuario_nombre);
@@ -165,9 +162,9 @@ export default function HistoriasPage() {
     router.push('historias/crear');
   };
 
-  const handleVistaUsuarios = () => {
-    router.push(`/historias/vista-usuarios/`);
-  };
+  // const handleUsuarioHistoria = () => {
+  //   router.push(`/historias/vista-usuarios/`);
+  // };
 
 
   return (
@@ -247,7 +244,7 @@ export default function HistoriasPage() {
               <div key={usuario} style={{ border: '2px solid #464543' }} className="relative flex flex-col items-center mx-2">
                 <div style={{ maxWidth: '120px', height: '200px', position: 'relative', overflow: 'hidden' }}
                   className="flex flex-col justify-between items-center w-15 h-15 border border-gray-300 p-2 box-border historia cursor-pointer"
-                  onClick={() => handleVistaUsuarios()}>  
+                  onClick={() => router.push(`/historias/usuario/${historia.usuario_id}`)}>
                   <div className="absolute inset-0 bg-cover bg-center blur-sm" style={{backgroundImage: `url(${historia.imagen || ''})`,
                   filter: 'blur(8px)',zIndex: 1,}}></div>
                   <div  style={{ minWidth: '100px' }} className="relative z-10 flex flex-col items-center justify-center h-full">

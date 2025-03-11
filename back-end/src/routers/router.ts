@@ -1,5 +1,5 @@
 import express from 'express';
-import { leerHistorias, crearHistoria, eliminarHistoria, crearHistoriaFavorita, leerHistoriasFavoritas, eliminarHistoriaFavorita, crearHistoriaImagen } from '../controller/historias.controller';
+import { leerHistorias, crearHistoria, eliminarHistoria, crearHistoriaFavorita, leerHistoriasFavoritas, eliminarHistoriaFavorita, crearHistoriaImagen, leerHistoriasID } from '../controller/historias.controller';
 import { login } from '../controller/login.controller.';
 import { upload } from "../config/multerConfig";
 
@@ -23,6 +23,13 @@ router.post('/login', login);
 // PARAMETROS: 
 // usuario_id = usuario ID especifico que realiza la consulta 
 router.get('/historias', leerHistorias);
+
+// ACCIÓN: Obtiene las historias en estado 'activo' de un usuario especifico
+// MÉTODO: GET
+// URL:    http://localhost:3306/api/historias/usuario/numero(id)_del_usuario
+// PARAMETRO:
+// numero(id)_del_usuario = ID especifico que realiza la consulta 
+router.get('/historias/usuario/:id_usuario', leerHistoriasID);
 
 // ACCIÓN: Subir nueva historia
 // MÉTODO: POST
@@ -53,7 +60,6 @@ router.post('/historias/crear', crearHistoria);
 // texto=*puede ser null*
 // colorTexto=*puede ser null*
 // imagen=1741227851848.png
-
 router.post('/historias/crearImg', upload.single("imagen"), crearHistoriaImagen);
 
 // ACCIÓN: Elimina una historia por su id especifico
@@ -88,8 +94,6 @@ router.post('/historias/favoritas/marcar', crearHistoriaFavorita);
 // MÉTODO: DELETE
 // URL:    http://localhost:3306/api/historias/favoritas/:numero(id)_de_la_historiaFavorita
 // PARÁMETRO (numero(id)_de_la_historiaFavorita): ID de la HistoriaFavorita que se desea eliminar
-// PETICIÓN JSON:
-// { }
 router.delete('/historias/favoritas/:id', eliminarHistoriaFavorita);
 
 export default router;

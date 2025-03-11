@@ -23,6 +23,8 @@ export const leerHistorias = async (req: Request, res: Response): Promise<Respon
     // Verificar si usuario_id es válido
     if (isNaN(usuario_id)) {
       return res.status(400).json({ message: "El usuario_id es requerido y debe ser un número válido." });
+    } else if (!usuario_id) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     // Obtener variable de la petición para mayor legibilidad
@@ -42,6 +44,60 @@ export const leerHistorias = async (req: Request, res: Response): Promise<Respon
     const amigosIds = amigos.map((amigo) =>
       amigo.usuario_id === var_usuario ? amigo.amigo_id : amigo.usuario_id
     );
+
+    // Obtener historias del usuario y sus amigos
+    const historias = await Historia.findAll({
+      attributes: [
+        "id",
+        "usuario_id",
+        "imagen",
+        "video",
+        "texto",
+        "colortexto",
+        "fecha_publicacion",
+        "favorito",
+        "estado",
+        [col("Usuario.nombre"), "usuario_nombre"],
+      ],
+      include: [
+        {
+          model: Usuario,
+          attributes: [], // Evita anidar los datos dentro de Usuario
+          required: true,
+        },
+      ],
+      where: {
+        [Op.or]: [
+          { usuario_id: var_usuario }, // Historias propias
+          { usuario_id: { [Op.in]: amigosIds } }, // Historias de amigos
+        ],
+        estado: "activo",
+      },
+      order: [["fecha_publicacion", "DESC"]],
+      group: ["Historia.id", "Usuario.nombre"], // Agrupar por historia y usuario
+    });
+
+    return res.status(200).json(historias);    
+  } catch (error) {
+    console.error('Error al obtener las historias: ', error);
+    return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+// Obtiene las Historias en estado=activo de un usuario especifico 
+export const leerHistoriasID = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    // Extraer usuario_id de los parámetros de consulta en lugar del cuerpo de la solicitud
+    const var_usuario = parseInt(req.params.id_usuario, 10);
+    
+    // Consulta si el ID del ususario existe
+    const id_consulta = await Usuario.findByPk(var_usuario);
+
+    // Verificar si usuario_id es válido
+    if (isNaN(var_usuario)) {
+      return res.status(400).json({ message: "El usuario_id es requerido y debe ser un número válido." });
+    } else if (!id_consulta) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
 
     // Obtener historias del usuario y sus amigos
     const historias = await Historia.findAll({
@@ -68,23 +124,19 @@ export const leerHistorias = async (req: Request, res: Response): Promise<Respon
         },
       ],
       where: {
-        [Op.or]: [
-          { usuario_id: var_usuario }, // Historias propias
-          { usuario_id: { [Op.in]: amigosIds } }, // Historias de amigos
-        ],
+        usuario_id: var_usuario, // Historias propias
         estado: "activo",
       },
-      order: [["fecha_publicacion", "DESC"]],
-      group: ["Historia.id", "Usuario.nombre"], // Agrupar por historia y usuario
+      order: [["fecha_publicacion", "DESC"]], // Ordena los registros de manera DESCENDENTE
+      group: ["Historia.id", "Usuario.nombre"],
     });
 
     return res.status(200).json(historias);    
   } catch (error) {
-    console.error('Error al obtener las historias: ', error);
+    console.error('Error al obtener las historias por ID: ', error);
     return res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
-
 // Subir nueva historia
 export const crearHistoria = async (req: Request, res: Response): Promise<Response> => {
   try {
