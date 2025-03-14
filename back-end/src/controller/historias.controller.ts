@@ -102,8 +102,8 @@ export const leerHistoriasID = async (req: Request, res: Response): Promise<Resp
     // Obtener historias del usuario y sus amigos
     const historias = await Historia.findAll({
       attributes: [
-        [col("Usuario.nombre"), "usuario_nombre"], // Nombre del usuario al inicio
         "id",
+        "usuario_id",
         "imagen",
         "video",
         "texto",
@@ -111,10 +111,7 @@ export const leerHistoriasID = async (req: Request, res: Response): Promise<Resp
         "fecha_publicacion",
         "favorito",
         "estado",
-        [
-          fn("COUNT", col("Historia.id")), // Contador de historias por usuario
-          "total_historias",
-        ],
+        [col("Usuario.nombre"), "usuario_nombre"], // Nombre del usuario al inicio
       ],
       include: [
         {
